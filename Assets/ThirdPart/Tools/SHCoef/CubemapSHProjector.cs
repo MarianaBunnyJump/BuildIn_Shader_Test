@@ -10,9 +10,9 @@ public class CubemapSHProjector : EditorWindow
     public Transform go;
 
     //PRIVATE FIELDS
-    private Material    view_mat;
-    private float       view_mode;
-    private Vector4[]   coefficients;
+    private Material view_mat;
+    private float view_mode;
+    private Vector4[] coefficients;
 
     private SerializedObject so;
     private SerializedProperty sp_input_cubemap;
@@ -142,6 +142,7 @@ public class CubemapSHProjector : EditorWindow
                     coefficients = new Vector4[7];
                     CheckAndConvertEnvMap(ref envMap, ref coefficients);
                 }
+
                 SceneView.RepaintAll();
             }
 
@@ -158,6 +159,7 @@ public class CubemapSHProjector : EditorWindow
                     {
                         mat_list.AddRange(render.sharedMaterials);
                     }
+
                     foreach (var mat in mat_list)
                     {
                         mat.SetVector("custom_SHAr", coefficients[0]);
@@ -168,6 +170,7 @@ public class CubemapSHProjector : EditorWindow
                         mat.SetVector("custom_SHBb", coefficients[5]);
                         mat.SetVector("custom_SHC", coefficients[6]);
                     }
+
                     mat_list.Clear();
                     SceneView.RepaintAll();
                 }

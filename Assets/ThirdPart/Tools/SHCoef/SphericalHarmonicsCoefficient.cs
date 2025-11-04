@@ -104,7 +104,7 @@ public static class SphericalHarmonicsCoefficient
                     // index of texel in texture
                     int pixOffsetIndex = x + y * cubeTexture.width;
                     // get color from texture and map to range [0, 1]
-                    Vector3 clr= new Vector3(data[pixOffsetIndex].r, data[pixOffsetIndex].g, data[pixOffsetIndex].b);
+                    Vector3 clr = new Vector3(data[pixOffsetIndex].r, data[pixOffsetIndex].g, data[pixOffsetIndex].b);
                     //if (data[pixOffsetIndex].a == 1)
                     //{
                     //    clr = new Vector3(data[pixOffsetIndex].r, data[pixOffsetIndex].g, data[pixOffsetIndex].b);
@@ -119,6 +119,7 @@ public static class SphericalHarmonicsCoefficient
                         clr.y = Mathf.GammaToLinearSpace(clr.y);
                         clr.z = Mathf.GammaToLinearSpace(clr.z);
                     }
+
                     // scale color and add to previously accumulated coefficients
                     sphericalHarmonicsScale9(ref shBuffB, shBuff, clr.x * fDiffSolid);
                     sphericalHarmonicsAdd9(ref resultR, resultR, shBuffB);
@@ -147,7 +148,7 @@ public static class SphericalHarmonicsCoefficient
 
     private static Vector3 DecodeHDR(Color clr)
     {
-        return new Vector3(clr.r, clr.g, clr.b) * clr.a;// * Mathf.Pow(clr.a, 2);// * (Mathf.Pow(clr.a, 0.1f) * 1);
+        return new Vector3(clr.r, clr.g, clr.b) * clr.a; // * Mathf.Pow(clr.a, 2);// * (Mathf.Pow(clr.a, 0.1f) * 1);
     }
 
     private static void sphericalHarmonicsEvaluateDirection9(ref float[] outsh, Vector3 dir)
@@ -193,6 +194,7 @@ public static class SphericalHarmonicsCoefficient
     public static readonly float fC2 = Mathf.Sqrt(15.0f) / (8.0f * s_fSqrtPI);
     public static readonly float fC3 = Mathf.Sqrt(5.0f) / (16.0f * s_fSqrtPI);
     public static readonly float fC4 = 0.5f * fC2;
+
     public static void ConvertSHConstants(Vector3[] sh, ref Vector4[] SHArBrC)
     {
         int iC;

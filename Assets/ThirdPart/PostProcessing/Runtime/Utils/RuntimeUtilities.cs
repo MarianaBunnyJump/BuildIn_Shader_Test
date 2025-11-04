@@ -61,7 +61,8 @@ namespace UnityEngine.Rendering.PostProcessing
             {
                 if (m_WhiteTexture3D == null)
                 {
-                    m_WhiteTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false) { name = "White Texture 3D" };
+                    m_WhiteTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false)
+                        { name = "White Texture 3D" };
                     m_WhiteTexture3D.SetPixels(new Color[] { Color.white });
                     m_WhiteTexture3D.Apply();
                 }
@@ -107,7 +108,8 @@ namespace UnityEngine.Rendering.PostProcessing
             {
                 if (m_BlackTexture3D == null)
                 {
-                    m_BlackTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false) { name = "Black Texture 3D" };
+                    m_BlackTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false)
+                        { name = "Black Texture 3D" };
                     m_BlackTexture3D.SetPixels(new Color[] { Color.black });
                     m_BlackTexture3D.Apply();
                 }
@@ -130,7 +132,8 @@ namespace UnityEngine.Rendering.PostProcessing
             {
                 if (m_TransparentTexture == null)
                 {
-                    m_TransparentTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false) { name = "Transparent Texture" };
+                    m_TransparentTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false)
+                        { name = "Transparent Texture" };
                     m_TransparentTexture.SetPixel(0, 0, Color.clear);
                     m_TransparentTexture.Apply();
                 }
@@ -153,7 +156,8 @@ namespace UnityEngine.Rendering.PostProcessing
             {
                 if (m_TransparentTexture3D == null)
                 {
-                    m_TransparentTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false) { name = "Transparent Texture 3D" };
+                    m_TransparentTexture3D = new Texture3D(1, 1, 1, TextureFormat.ARGB32, false)
+                        { name = "Transparent Texture 3D" };
                     m_TransparentTexture3D.SetPixels(new Color[] { Color.clear });
                     m_TransparentTexture3D.Apply();
                 }
@@ -243,10 +247,10 @@ namespace UnityEngine.Rendering.PostProcessing
                 s_FullscreenTriangle.SetVertices(new List<Vector3>
                 {
                     new Vector3(-1f, -1f, 0f),
-                    new Vector3(-1f,  3f, 0f),
-                    new Vector3( 3f, -1f, 0f)
+                    new Vector3(-1f, 3f, 0f),
+                    new Vector3(3f, -1f, 0f)
                 });
-                s_FullscreenTriangle.SetIndices(new [] { 0, 1, 2 }, MeshTopology.Triangles, 0, false);
+                s_FullscreenTriangle.SetIndices(new[] { 0, 1, 2 }, MeshTopology.Triangles, 0, false);
                 s_FullscreenTriangle.UploadMeshData(false);
 
                 return s_FullscreenTriangle;
@@ -409,13 +413,14 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <remarks>
         /// <see cref="RenderBufferLoadAction"/> are only used on Unity 2018.2 or newer.
         /// </remarks>
-        public static void SetRenderTargetWithLoadStoreAction(this CommandBuffer cmd, RenderTargetIdentifier rt, RenderBufferLoadAction loadAction, RenderBufferStoreAction storeAction)
+        public static void SetRenderTargetWithLoadStoreAction(this CommandBuffer cmd, RenderTargetIdentifier rt,
+            RenderBufferLoadAction loadAction, RenderBufferStoreAction storeAction)
         {
-            #if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
             cmd.SetRenderTarget(rt, loadAction, storeAction);
-            #else
+#else
             cmd.SetRenderTarget(rt);
-            #endif
+#endif
         }
 
         /// <summary>
@@ -429,14 +434,16 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="depthLoadAction">The load action for the depth render target</param>
         /// <param name="depthStoreAction">The store action for the depth render target</param>
         public static void SetRenderTargetWithLoadStoreAction(this CommandBuffer cmd,
-            RenderTargetIdentifier color, RenderBufferLoadAction colorLoadAction, RenderBufferStoreAction colorStoreAction,
-            RenderTargetIdentifier depth, RenderBufferLoadAction depthLoadAction, RenderBufferStoreAction depthStoreAction)
+            RenderTargetIdentifier color, RenderBufferLoadAction colorLoadAction,
+            RenderBufferStoreAction colorStoreAction,
+            RenderTargetIdentifier depth, RenderBufferLoadAction depthLoadAction,
+            RenderBufferStoreAction depthStoreAction)
         {
-            #if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
             cmd.SetRenderTarget(color, colorLoadAction, colorStoreAction, depth, depthLoadAction, depthStoreAction);
-            #else
+#else
             cmd.SetRenderTarget(color, depth);
-            #endif
+#endif
         }
 
         /// <summary>
@@ -447,10 +454,12 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="destination">The destination render target</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="viewport">An optional viewport to consider for the blit</param>
-        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, bool clear = false, Rect? viewport = null)
+        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, bool clear = false, Rect? viewport = null)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
-            cmd.SetRenderTargetWithLoadStoreAction(destination, viewport == null ? LoadAction.DontCare : LoadAction.Load, StoreAction.Store);
+            cmd.SetRenderTargetWithLoadStoreAction(destination,
+                viewport == null ? LoadAction.DontCare : LoadAction.Load, StoreAction.Store);
 
             if (viewport != null)
                 cmd.SetViewport(viewport.Value);
@@ -471,17 +480,20 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="loadAction">The load action for this blit</param>
         /// <param name="viewport">An optional viewport to consider for the blit</param>
-        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, RenderBufferLoadAction loadAction, Rect? viewport = null)
+        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, PropertySheet propertySheet, int pass,
+            RenderBufferLoadAction loadAction, Rect? viewport = null)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
-            #if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
             bool clear = (loadAction == LoadAction.Clear);
-            if(clear)
+            if (clear)
                 loadAction = LoadAction.DontCare;
-            #else
+#else
             bool clear = false;
-            #endif
-            cmd.SetRenderTargetWithLoadStoreAction(destination, viewport == null ? loadAction : LoadAction.Load, StoreAction.Store);
+#endif
+            cmd.SetRenderTargetWithLoadStoreAction(destination, viewport == null ? loadAction : LoadAction.Load,
+                StoreAction.Store);
 
             if (viewport != null)
                 cmd.SetViewport(viewport.Value);
@@ -489,7 +501,8 @@ namespace UnityEngine.Rendering.PostProcessing
             if (clear)
                 cmd.ClearRenderTarget(true, true, Color.clear);
 
-            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
+            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass,
+                propertySheet.properties);
         }
 
         /// <summary>
@@ -502,11 +515,14 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="viewport">An optional viewport to consider for the blit</param>
-        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false, Rect? viewport = null)
+        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false,
+            Rect? viewport = null)
         {
-            #if UNITY_2018_2_OR_NEWER
-            cmd.BlitFullscreenTriangle(source, destination, propertySheet, pass, clear ? LoadAction.Clear : LoadAction.DontCare, viewport);
-            #else
+#if UNITY_2018_2_OR_NEWER
+            cmd.BlitFullscreenTriangle(source, destination, propertySheet, pass,
+                clear ? LoadAction.Clear : LoadAction.DontCare, viewport);
+#else
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
             cmd.SetRenderTargetWithLoadStoreAction(destination, viewport == null ? LoadAction.DontCare : LoadAction.Load, StoreAction.Store);
 
@@ -517,7 +533,7 @@ namespace UnityEngine.Rendering.PostProcessing
                 cmd.ClearRenderTarget(true, true, Color.clear);
 
             cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
-            #endif
+#endif
         }
 
         /// <summary>
@@ -529,7 +545,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="material">The material to use for the blit</param>
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="eye">The target eye</param>
-        public static void BlitFullscreenTriangleFromDoubleWide(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, Material material, int pass, int eye)
+        public static void BlitFullscreenTriangleFromDoubleWide(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, Material material, int pass, int eye)
         {
             Vector4 uvScaleOffset = new Vector4(0.5f, 1.0f, 0, 0);
 
@@ -548,7 +565,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="propertySheet">The property sheet to use</param>
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="eye">The target eye</param>
-        public static void BlitFullscreenTriangleToDoubleWide(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, int eye)
+        public static void BlitFullscreenTriangleToDoubleWide(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, int eye)
         {
             Vector4 posScaleOffset = new Vector4(0.5f, 1.0f, -0.5f, 0);
 
@@ -569,16 +587,20 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="depthSlice">The slice to use for the texture array</param>
-        public static void BlitFullscreenTriangleFromTexArray(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false, int depthSlice = -1)
+        public static void BlitFullscreenTriangleFromTexArray(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false,
+            int depthSlice = -1)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
             cmd.SetGlobalFloat(ShaderIDs.DepthSlice, depthSlice);
-            cmd.SetRenderTargetWithLoadStoreAction(destination, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
+            cmd.SetRenderTargetWithLoadStoreAction(destination, RenderBufferLoadAction.DontCare,
+                RenderBufferStoreAction.Store);
 
             if (clear)
                 cmd.ClearRenderTarget(true, true, Color.clear);
 
-            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
+            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass,
+                propertySheet.properties);
         }
 
         /// <summary>
@@ -592,7 +614,9 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="depthSlice">The array slice to consider as a source</param>
-        public static void BlitFullscreenTriangleToTexArray(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false, int depthSlice = -1)
+        public static void BlitFullscreenTriangleToTexArray(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, PropertySheet propertySheet, int pass, bool clear = false,
+            int depthSlice = -1)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
             cmd.SetGlobalFloat(ShaderIDs.DepthSlice, depthSlice);
@@ -601,7 +625,8 @@ namespace UnityEngine.Rendering.PostProcessing
             if (clear)
                 cmd.ClearRenderTarget(true, true, Color.clear);
 
-            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
+            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass,
+                propertySheet.properties);
         }
 
         /// <summary>
@@ -615,25 +640,30 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="viewport">An optional viewport to consider for the blit</param>
-        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination, RenderTargetIdentifier depth, PropertySheet propertySheet, int pass, bool clear = false, Rect? viewport = null)
+        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, RenderTargetIdentifier depth, PropertySheet propertySheet, int pass,
+            bool clear = false, Rect? viewport = null)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
 
             LoadAction loadAction = viewport == null ? LoadAction.DontCare : LoadAction.Load;
             if (clear)
             {
-                cmd.SetRenderTargetWithLoadStoreAction(destination, loadAction, StoreAction.Store, depth, loadAction, StoreAction.Store);
+                cmd.SetRenderTargetWithLoadStoreAction(destination, loadAction, StoreAction.Store, depth, loadAction,
+                    StoreAction.Store);
                 cmd.ClearRenderTarget(true, true, Color.clear);
             }
             else
             {
-                cmd.SetRenderTargetWithLoadStoreAction(destination, loadAction, StoreAction.Store, depth, LoadAction.Load, StoreAction.Store);
+                cmd.SetRenderTargetWithLoadStoreAction(destination, loadAction, StoreAction.Store, depth,
+                    LoadAction.Load, StoreAction.Store);
             }
 
             if (viewport != null)
                 cmd.SetViewport(viewport.Value);
 
-            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
+            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass,
+                propertySheet.properties);
         }
 
         /// <summary>
@@ -647,7 +677,9 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="pass">The pass from the material to use</param>
         /// <param name="clear">Should the destination target be cleared?</param>
         /// <param name="viewport">An optional viewport to consider for the blit</param>
-        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier[] destinations, RenderTargetIdentifier depth, PropertySheet propertySheet, int pass, bool clear = false, Rect? viewport = null)
+        public static void BlitFullscreenTriangle(this CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier[] destinations, RenderTargetIdentifier depth, PropertySheet propertySheet, int pass,
+            bool clear = false, Rect? viewport = null)
         {
             cmd.SetGlobalTexture(ShaderIDs.MainTex, source);
             cmd.SetRenderTarget(destinations, depth);
@@ -658,7 +690,8 @@ namespace UnityEngine.Rendering.PostProcessing
             if (clear)
                 cmd.ClearRenderTarget(true, true, Color.clear);
 
-            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass, propertySheet.properties);
+            cmd.DrawMesh(fullscreenTriangle, Matrix4x4.identity, propertySheet.material, 0, pass,
+                propertySheet.properties);
         }
 
         /// <summary>
@@ -667,12 +700,13 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="cmd">The command buffer to use</param>
         /// <param name="source">The source render target</param>
         /// <param name="destination">The destination render target</param>
-        public static void BuiltinBlit(this CommandBuffer cmd, Rendering.RenderTargetIdentifier source, RenderTargetIdentifier destination)
+        public static void BuiltinBlit(this CommandBuffer cmd, Rendering.RenderTargetIdentifier source,
+            RenderTargetIdentifier destination)
         {
-            #if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
             cmd.SetRenderTarget(destination, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
             destination = BuiltinRenderTextureType.CurrentActive;
-            #endif
+#endif
             cmd.Blit(source, destination);
         }
 
@@ -684,12 +718,13 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="destination">The destination render target</param>
         /// <param name="mat">The material to use for the blit</param>
         /// <param name="pass">The pass from the material to use</param>
-        public static void BuiltinBlit(this CommandBuffer cmd, Rendering.RenderTargetIdentifier source, RenderTargetIdentifier destination, Material mat, int pass = 0)
+        public static void BuiltinBlit(this CommandBuffer cmd, Rendering.RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, Material mat, int pass = 0)
         {
-            #if UNITY_2018_2_OR_NEWER
+#if UNITY_2018_2_OR_NEWER
             cmd.SetRenderTarget(destination, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
             destination = BuiltinRenderTextureType.CurrentActive;
-            #endif
+#endif
             cmd.Blit(source, destination, mat, pass);
         }
 
@@ -706,7 +741,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// If the CopyTexture command isn't supported on the target platform it will revert to a
         /// fullscreen blit command instead.
         /// </remarks>
-        public static void CopyTexture(CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination)
+        public static void CopyTexture(CommandBuffer cmd, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination)
         {
             if (SystemInfo.copyTextureSupport > CopyTextureSupport.None)
             {
@@ -739,7 +775,11 @@ namespace UnityEngine.Rendering.PostProcessing
         /// </summary>
         public static bool supportsDeferredShading
         {
-            get { return scriptableRenderPipelineActive || GraphicsSettings.GetShaderMode(BuiltinShaderType.DeferredShading) != BuiltinShaderMode.Disabled; }
+            get
+            {
+                return scriptableRenderPipelineActive ||
+                       GraphicsSettings.GetShaderMode(BuiltinShaderType.DeferredShading) != BuiltinShaderMode.Disabled;
+            }
         }
 
         /// <summary>
@@ -748,7 +788,11 @@ namespace UnityEngine.Rendering.PostProcessing
         /// </summary>
         public static bool supportsDepthNormals
         {
-            get { return scriptableRenderPipelineActive || GraphicsSettings.GetShaderMode(BuiltinShaderType.DepthNormals) != BuiltinShaderMode.Disabled; }
+            get
+            {
+                return scriptableRenderPipelineActive ||
+                       GraphicsSettings.GetShaderMode(BuiltinShaderType.DepthNormals) != BuiltinShaderMode.Disabled;
+            }
         }
 
 #if UNITY_EDITOR
@@ -763,7 +807,7 @@ namespace UnityEngine.Rendering.PostProcessing
             get
             {
                 return PlayerSettings.virtualRealitySupported
-                    && PlayerSettings.stereoRenderingPath == UnityEditor.StereoRenderingPath.SinglePass;
+                       && PlayerSettings.stereoRenderingPath == UnityEditor.StereoRenderingPath.SinglePass;
             }
         }
 #endif
@@ -816,7 +860,11 @@ namespace UnityEngine.Rendering.PostProcessing
         /// </summary>
         public static bool isAndroidOpenGL
         {
-            get { return Application.platform == RuntimePlatform.Android && SystemInfo.graphicsDeviceType != GraphicsDeviceType.Vulkan; }
+            get
+            {
+                return Application.platform == RuntimePlatform.Android &&
+                       SystemInfo.graphicsDeviceType != GraphicsDeviceType.Vulkan;
+            }
         }
 
         /// <summary>
@@ -830,7 +878,8 @@ namespace UnityEngine.Rendering.PostProcessing
                 RenderTextureFormat format = RenderTextureFormat.RGB111110Float;
 #if UNITY_EDITOR
                 var target = EditorUserBuildSettings.activeBuildTarget;
-                if (target != BuildTarget.Android && target != BuildTarget.iOS && target != BuildTarget.tvOS && target != BuildTarget.Switch)
+                if (target != BuildTarget.Android && target != BuildTarget.iOS && target != BuildTarget.tvOS &&
+                    target != BuildTarget.Switch)
                     return RenderTextureFormat.DefaultHDR;
 #endif // UNITY_EDITOR
                 if (format.IsSupported())
@@ -847,7 +896,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <returns><c>true</c> if the format is floating-point, <c>false</c> otherwise</returns>
         public static bool isFloatingPointFormat(RenderTextureFormat format)
         {
-            return format == RenderTextureFormat.DefaultHDR || format == RenderTextureFormat.ARGBHalf || format == RenderTextureFormat.ARGBFloat ||
+            return format == RenderTextureFormat.DefaultHDR || format == RenderTextureFormat.ARGBHalf ||
+                   format == RenderTextureFormat.ARGBFloat ||
                    format == RenderTextureFormat.RGFloat || format == RenderTextureFormat.RGHalf ||
                    format == RenderTextureFormat.RFloat || format == RenderTextureFormat.RHalf ||
                    format == RenderTextureFormat.RGB111110Float;
@@ -892,7 +942,8 @@ namespace UnityEngine.Rendering.PostProcessing
             // TODO: Is there more proper way to determine this? What about SRPs?
             var gtype = SystemInfo.graphicsDeviceType;
             return camera.actualRenderingPath == RenderingPath.DeferredShading &&
-                (gtype == GraphicsDeviceType.Direct3D11 || gtype == GraphicsDeviceType.Direct3D12 || gtype == GraphicsDeviceType.XboxOne);
+                   (gtype == GraphicsDeviceType.Direct3D11 || gtype == GraphicsDeviceType.Direct3D12 ||
+                    gtype == GraphicsDeviceType.XboxOne);
         }
 
         /// <summary>
@@ -937,7 +988,7 @@ namespace UnityEngine.Rendering.PostProcessing
         public static bool IsPostProcessingActive(PostProcessLayer layer)
         {
             return layer != null
-                && layer.enabled;
+                   && layer.enabled;
         }
 
         /// <summary>
@@ -948,8 +999,8 @@ namespace UnityEngine.Rendering.PostProcessing
         public static bool IsTemporalAntialiasingActive(PostProcessLayer layer)
         {
             return IsPostProcessingActive(layer)
-                && layer.antialiasingMode == PostProcessLayer.Antialiasing.TemporalAntialiasing
-                && layer.temporalAntialiasing.IsSupported();
+                   && layer.antialiasingMode == PostProcessLayer.Antialiasing.TemporalAntialiasing
+                   && layer.temporalAntialiasing.IsSupported();
         }
 
         /// <summary>
@@ -1067,7 +1118,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <param name="origProj">The original projection matrix</param>
         /// <param name="jitter">The jitter offset</param>
         /// <returns>A jittered projection matrix</returns>
-        public static Matrix4x4 GenerateJitteredProjectionMatrixFromOriginal(PostProcessRenderContext context, Matrix4x4 origProj, Vector2 jitter)
+        public static Matrix4x4 GenerateJitteredProjectionMatrixFromOriginal(PostProcessRenderContext context,
+            Matrix4x4 origProj, Vector2 jitter)
         {
 #if UNITY_2017_2_OR_NEWER
             var planes = origProj.decomposeProjection;
@@ -1076,7 +1128,7 @@ namespace UnityEngine.Rendering.PostProcessing
             float horizFov = Math.Abs(planes.left) + Math.Abs(planes.right);
 
             var planeJitter = new Vector2(jitter.x * horizFov / context.screenWidth,
-                                          jitter.y * vertFov / context.screenHeight);
+                jitter.y * vertFov / context.screenHeight);
 
             planes.left += planeJitter.x;
             planes.right += planeJitter.x;
@@ -1156,7 +1208,10 @@ namespace UnityEngine.Rendering.PostProcessing
                         {
                             innerTypes = t.GetTypes();
                         }
-                        catch { }
+                        catch
+                        {
+                        }
+
                         return innerTypes;
                     });
             }

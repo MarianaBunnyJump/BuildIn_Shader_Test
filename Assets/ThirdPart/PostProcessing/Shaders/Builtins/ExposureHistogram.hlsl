@@ -12,11 +12,11 @@
     #define HISTOGRAM_REDUCTION_THREAD_Y    8
     #define HISTOGRAM_REDUCTION_ALT_PATH    1
 #else
-    #define HISTOGRAM_THREAD_X              16
-    #define HISTOGRAM_THREAD_Y              16
-    #define HISTOGRAM_REDUCTION_THREAD_X    HISTOGRAM_THREAD_X
-    #define HISTOGRAM_REDUCTION_THREAD_Y    HISTOGRAM_BINS / HISTOGRAM_THREAD_Y
-    #define HISTOGRAM_REDUCTION_ALT_PATH    0
+#define HISTOGRAM_THREAD_X              16
+#define HISTOGRAM_THREAD_Y              16
+#define HISTOGRAM_REDUCTION_THREAD_X    HISTOGRAM_THREAD_X
+#define HISTOGRAM_REDUCTION_THREAD_Y    HISTOGRAM_BINS / HISTOGRAM_THREAD_Y
+#define HISTOGRAM_REDUCTION_ALT_PATH    0
 #endif
 
 #define HISTOGRAM_REDUCTION_BINS HISTOGRAM_REDUCTION_THREAD_X * HISTOGRAM_REDUCTION_THREAD_Y
@@ -49,7 +49,8 @@ float FindMaxHistogramValue(StructuredBuffer<uint> buffer)
     return float(maxValue);
 }
 
-void FilterLuminance(StructuredBuffer<uint> buffer, uint i, float maxHistogramValue, float2 scaleOffset, inout float4 filter)
+void FilterLuminance(StructuredBuffer<uint> buffer, uint i, float maxHistogramValue, float2 scaleOffset,
+                     inout float4 filter)
 {
     float binValue = GetBinValue(buffer, i, maxHistogramValue);
 

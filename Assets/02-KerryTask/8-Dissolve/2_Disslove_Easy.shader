@@ -2,58 +2,61 @@
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Disslove_Easy2"
 {
-	Properties
-	{
-		_Cutoff( "Mask Clip Value", Float ) = 0.5
-		_MainTex1("MainTex", 2D) = "white" {}
-		_Gradient1("Gradient", 2D) = "white" {}
-		_ChangeAmount1("ChangeAmount", Range( 0 , 1)) = 0.5559191
-		_EdgeWidth1("EdgeWidth", Range( 0 , 2)) = 0.1
-		[HDR]_Color1("Color 0", Color) = (0,0,0,0)
-		[HideInInspector] _texcoord( "", 2D ) = "white" {}
-		[HideInInspector] __dirty( "", Int ) = 1
-	}
+    Properties
+    {
+        _Cutoff( "Mask Clip Value", Float ) = 0.5
+        _MainTex1("MainTex", 2D) = "white" {}
+        _Gradient1("Gradient", 2D) = "white" {}
+        _ChangeAmount1("ChangeAmount", Range( 0 , 1)) = 0.5559191
+        _EdgeWidth1("EdgeWidth", Range( 0 , 2)) = 0.1
+        [HDR]_Color1("Color 0", Color) = (0,0,0,0)
+        [HideInInspector] _texcoord( "", 2D ) = "white" {}
+        [HideInInspector] __dirty( "", Int ) = 1
+    }
 
-	SubShader
-	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
-		Cull Back
-		CGPROGRAM
-		#pragma target 3.0
-		#pragma surface surf Standard keepalpha addshadow fullforwardshadows 
-		struct Input
-		{
-			float2 uv_texcoord;
-		};
+    SubShader
+    {
+        Tags
+        {
+            "RenderType" = "Transparent" "Queue" = "Geometry+0" "IsEmissive" = "true"
+        }
+        Cull Back
+        CGPROGRAM
+        #pragma target 3.0
+        #pragma surface surf Standard keepalpha addshadow fullforwardshadows
+        struct Input
+        {
+            float2 uv_texcoord;
+        };
 
-		uniform sampler2D _MainTex1;
-		uniform float4 _MainTex1_ST;
-		uniform float4 _Color1;
-		uniform sampler2D _Gradient1;
-		SamplerState sampler_Gradient1;
-		uniform float4 _Gradient1_ST;
-		uniform float _ChangeAmount1;
-		uniform float _EdgeWidth1;
-		SamplerState sampler_MainTex1;
-		uniform float _Cutoff = 0.5;
+        uniform sampler2D _MainTex1;
+        uniform float4 _MainTex1_ST;
+        uniform float4 _Color1;
+        uniform sampler2D _Gradient1;
+        SamplerState sampler_Gradient1;
+        uniform float4 _Gradient1_ST;
+        uniform float _ChangeAmount1;
+        uniform float _EdgeWidth1;
+        SamplerState sampler_MainTex1;
+        uniform float _Cutoff = 0.5;
 
-		void surf( Input i , inout SurfaceOutputStandard o )
-		{
-			float2 uv_MainTex1 = i.uv_texcoord * _MainTex1_ST.xy + _MainTex1_ST.zw;
-			float4 tex2DNode13 = tex2D( _MainTex1, uv_MainTex1 );
-			float2 uv_Gradient1 = i.uv_texcoord * _Gradient1_ST.xy + _Gradient1_ST.zw;
-			float temp_output_4_0 = ( tex2D( _Gradient1, uv_Gradient1 ).r - (-1.0 + (_ChangeAmount1 - 0.0) * (1.0 - -1.0) / (1.0 - 0.0)) );
-			float clampResult10 = clamp( ( 1.0 - ( distance( temp_output_4_0 , 0.5 ) / _EdgeWidth1 ) ) , 0.0 , 1.0 );
-			float4 lerpResult14 = lerp( tex2DNode13 , ( tex2DNode13 * _Color1 * 2.0 ) , clampResult10);
-			o.Emission = lerpResult14.rgb;
-			o.Alpha = 1;
-			clip( ( tex2DNode13.a * step( 0.5 , temp_output_4_0 ) ) - _Cutoff );
-		}
-
-		ENDCG
-	}
-	Fallback "Diffuse"
-	CustomEditor "ASEMaterialInspector"
+        void surf(Input i, inout SurfaceOutputStandard o)
+        {
+            float2 uv_MainTex1 = i.uv_texcoord * _MainTex1_ST.xy + _MainTex1_ST.zw;
+            float4 tex2DNode13 = tex2D(_MainTex1, uv_MainTex1);
+            float2 uv_Gradient1 = i.uv_texcoord * _Gradient1_ST.xy + _Gradient1_ST.zw;
+            float temp_output_4_0 = (tex2D(_Gradient1, uv_Gradient1).r - (-1.0 + (_ChangeAmount1 - 0.0) * (1.0 - -1.0) /
+                (1.0 - 0.0)));
+            float clampResult10 = clamp((1.0 - (distance(temp_output_4_0, 0.5) / _EdgeWidth1)), 0.0, 1.0);
+            float4 lerpResult14 = lerp(tex2DNode13, (tex2DNode13 * _Color1 * 2.0), clampResult10);
+            o.Emission = lerpResult14.rgb;
+            o.Alpha = 1;
+            clip((tex2DNode13.a * step(0.5, temp_output_4_0)) - _Cutoff);
+        }
+        ENDCG
+    }
+    Fallback "Diffuse"
+    CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
 Version=18500

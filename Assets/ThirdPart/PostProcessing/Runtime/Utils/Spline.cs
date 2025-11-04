@@ -25,14 +25,11 @@ namespace UnityEngine.Rendering.PostProcessing
         /// </summary>
         public AnimationCurve curve;
 
-        [SerializeField]
-        bool m_Loop;
+        [SerializeField] bool m_Loop;
 
-        [SerializeField]
-        float m_ZeroValue;
+        [SerializeField] float m_ZeroValue;
 
-        [SerializeField]
-        float m_Range;
+        [SerializeField] float m_Range;
 
         AnimationCurve m_InternalLoopingCurve;
 
@@ -140,7 +137,8 @@ namespace UnityEngine.Rendering.PostProcessing
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + curve.GetHashCode(); // Not implemented in Unity, so it'll always return the same value :(
+                hash = hash * 23 +
+                       curve.GetHashCode(); // Not implemented in Unity, so it'll always return the same value :(
                 return hash;
             }
         }

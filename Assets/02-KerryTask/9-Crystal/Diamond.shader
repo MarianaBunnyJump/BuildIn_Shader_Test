@@ -18,12 +18,15 @@ Shader "Diamond"
 
     SubShader
     {
-        
 
-        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
-       LOD 100
 
-        
+        Tags
+        {
+            "RenderType"="Opaque" "Queue"="Geometry"
+        }
+        LOD 100
+
+
         Pass
         {
             Name "Unlit"
@@ -32,7 +35,6 @@ Shader "Diamond"
             ZTest LEqual
             Cull Front
             CGPROGRAM
-            
             #ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 			//only defining to not throw compilation error over Unity 5.5
 			#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
@@ -56,7 +58,7 @@ Shader "Diamond"
             {
                 float4 vertex : SV_POSITION;
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 worldPos : TEXCOORD0;
+                float3 worldPos : TEXCOORD0;
                 #endif
                 float4 ase_texcoord1 : TEXCOORD1;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -69,7 +71,7 @@ Shader "Diamond"
             uniform float _RefractIntensity;
 
 
-            v2f vert(appdata v )
+            v2f vert(appdata v)
             {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
@@ -78,8 +80,8 @@ Shader "Diamond"
 
                 float3 ase_worldNormal = UnityObjectToWorldNormal(v.ase_normal);
                 o.ase_texcoord1.xyz = ase_worldNormal;
-                
-                
+
+
                 //setting value to unused interpolator channels and avoid initialization warnings
                 o.ase_texcoord1.w = 0;
                 float3 vertexValue = float3(0, 0, 0);
@@ -95,26 +97,27 @@ Shader "Diamond"
                 o.vertex = UnityObjectToClipPos(v.vertex);
 
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 #endif
                 return o;
             }
 
-            fixed4 frag(v2f i ) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(i);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 fixed4 finalColor;
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 WorldPosition = i.worldPos;
+                float3 WorldPosition = i.worldPos;
                 #endif
                 float3 ase_worldViewDir = UnityWorldSpaceViewDir(WorldPosition);
                 ase_worldViewDir = normalize(ase_worldViewDir);
                 float3 ase_worldNormal = i.ase_texcoord1.xyz;
-                float3 temp_output_13_0 = reflect( -ase_worldViewDir , ase_worldNormal );
-                float4 texCUBENode12 = texCUBE( _ReflectTex, temp_output_13_0 );
-                float4 temp_output_17_0 = ( _Color * texCUBE( _RefractTex, temp_output_13_0 ) * texCUBENode12 * _RefractIntensity );
-                
+                float3 temp_output_13_0 = reflect(-ase_worldViewDir, ase_worldNormal);
+                float4 texCUBENode12 = texCUBE(_ReflectTex, temp_output_13_0);
+                float4 temp_output_17_0 = (_Color * texCUBE(_RefractTex, temp_output_13_0) * texCUBENode12 *
+                    _RefractIntensity);
+
 
                 finalColor = temp_output_17_0;
                 return finalColor;
@@ -122,7 +125,7 @@ Shader "Diamond"
             ENDCG
         }
 
-        
+
 
         Pass
         {
@@ -132,7 +135,6 @@ Shader "Diamond"
             ZTest LEqual
             Cull Back
             CGPROGRAM
-            
             #ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 			//only defining to not throw compilation error over Unity 5.5
 			#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
@@ -156,7 +158,7 @@ Shader "Diamond"
             {
                 float4 vertex : SV_POSITION;
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 worldPos : TEXCOORD0;
+                float3 worldPos : TEXCOORD0;
                 #endif
                 float4 ase_texcoord1 : TEXCOORD1;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -174,7 +176,7 @@ Shader "Diamond"
             uniform float4 _RimColor;
 
 
-            v2f vert(appdata v )
+            v2f vert(appdata v)
             {
                 v2f o;
                 UNITY_SETUP_INSTANCE_ID(v);
@@ -183,8 +185,8 @@ Shader "Diamond"
 
                 float3 ase_worldNormal = UnityObjectToWorldNormal(v.ase_normal);
                 o.ase_texcoord1.xyz = ase_worldNormal;
-                
-                
+
+
                 //setting value to unused interpolator channels and avoid initialization warnings
                 o.ase_texcoord1.w = 0;
                 float3 vertexValue = float3(0, 0, 0);
@@ -200,43 +202,45 @@ Shader "Diamond"
                 o.vertex = UnityObjectToClipPos(v.vertex);
 
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 #endif
                 return o;
             }
 
-            fixed4 frag(v2f i ) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(i);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 fixed4 finalColor;
                 #ifdef ASE_NEEDS_FRAG_WORLD_POSITION
-				float3 WorldPosition = i.worldPos;
+                float3 WorldPosition = i.worldPos;
                 #endif
                 float3 ase_worldViewDir = UnityWorldSpaceViewDir(WorldPosition);
                 ase_worldViewDir = normalize(ase_worldViewDir);
                 float3 ase_worldNormal = i.ase_texcoord1.xyz;
-                float3 temp_output_13_0 = reflect( -ase_worldViewDir , ase_worldNormal );
-                float4 texCUBENode12 = texCUBE( _ReflectTex, temp_output_13_0 );
-                float4 temp_output_17_0 = ( _Color * texCUBE( _RefractTex, temp_output_13_0 ) * texCUBENode12 * _RefractIntensity );
-                float dotResult23 = dot( ase_worldNormal , ase_worldViewDir );
-                float clampResult25 = clamp( dotResult23 , 0.0 , 1.0 );
-                float temp_output_26_0 = ( 1.0 - clampResult25 );
-                float4 temp_output_20_0 = ( temp_output_17_0 + ( texCUBENode12 * _ReflectStrength * temp_output_26_0 ) );
-                
+                float3 temp_output_13_0 = reflect(-ase_worldViewDir, ase_worldNormal);
+                float4 texCUBENode12 = texCUBE(_ReflectTex, temp_output_13_0);
+                float4 temp_output_17_0 = (_Color * texCUBE(_RefractTex, temp_output_13_0) * texCUBENode12 *
+                    _RefractIntensity);
+                float dotResult23 = dot(ase_worldNormal, ase_worldViewDir);
+                float clampResult25 = clamp(dotResult23, 0.0, 1.0);
+                float temp_output_26_0 = (1.0 - clampResult25);
+                float4 temp_output_20_0 = (temp_output_17_0 + (texCUBENode12 * _ReflectStrength * temp_output_26_0));
 
-                finalColor = ( temp_output_20_0 + ( temp_output_20_0 * ( ( ( max( pow( temp_output_26_0 , _RimPower ) , 0.0 ) * _RimScale ) + _RimBase ) * _RimColor ) ) );
+
+                finalColor = (temp_output_20_0 + (temp_output_20_0 * (((max(pow(temp_output_26_0, _RimPower), 0.0) *
+                    _RimScale) + _RimBase) * _RimColor)));
                 return finalColor;
             }
             ENDCG
         }
 
-        
+
 
     }
     CustomEditor "ASEMaterialInspector"
-	
-	
+
+
 }/*ASEBEGIN
 Version=18500
 512;1227;1245;1234;1823.65;406.7099;1.919404;True;False

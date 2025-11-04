@@ -6,6 +6,7 @@ namespace UnityEngine.Rendering.PostProcessing
     class TextureLerper
     {
         static TextureLerper m_Instance;
+
         internal static TextureLerper instance
         {
             get
@@ -59,7 +60,8 @@ namespace UnityEngine.Rendering.PostProcessing
             }
         }
 
-        RenderTexture Get(RenderTextureFormat format, int w, int h, int d = 1, bool enableRandomWrite = false, bool force3D = false)
+        RenderTexture Get(RenderTextureFormat format, int w, int h, int d = 1, bool enableRandomWrite = false,
+            bool force3D = false)
         {
             RenderTexture rt = null;
             int i, len = m_Recycled.Count;
@@ -67,7 +69,8 @@ namespace UnityEngine.Rendering.PostProcessing
             for (i = 0; i < len; i++)
             {
                 var r = m_Recycled[i];
-                if (r.width == w && r.height == h && r.volumeDepth == d && r.format == format && r.enableRandomWrite == enableRandomWrite && (!force3D || (r.dimension == TextureDimension.Tex3D)))
+                if (r.width == w && r.height == h && r.volumeDepth == d && r.format == format &&
+                    r.enableRandomWrite == enableRandomWrite && (!force3D || (r.dimension == TextureDimension.Tex3D)))
                 {
                     rt = r;
                     break;
@@ -113,22 +116,23 @@ namespace UnityEngine.Rendering.PostProcessing
             if (t >= 1f) return to;
 
             bool is3D = from is Texture3D
-                    || (from is RenderTexture && ((RenderTexture)from).volumeDepth > 1);
+                        || (from is RenderTexture && ((RenderTexture)from).volumeDepth > 1);
 
             RenderTexture rt;
 
             // 3D texture blending is a special case and only works on compute enabled platforms
             if (is3D)
             {
-                int dpth = @from is Texture3D ? ((Texture3D) @from).depth : ((RenderTexture) @from).volumeDepth;
+                int dpth = @from is Texture3D ? ((Texture3D)@from).depth : ((RenderTexture)@from).volumeDepth;
                 int size = Mathf.Max(from.width, from.height);
                 size = Mathf.Max(size, dpth);
-                
+
                 rt = Get(RenderTextureFormat.ARGBHalf, from.width, from.height, dpth, true, true);
 
                 var compute = m_Resources.computeShaders.texture3dLerp;
                 int kernel = compute.FindKernel("KTexture3DLerp");
-                m_Command.SetComputeVectorParam(compute, "_DimensionsAndLerp", new Vector4(from.width, from.height, dpth, t));
+                m_Command.SetComputeVectorParam(compute, "_DimensionsAndLerp",
+                    new Vector4(from.width, from.height, dpth, t));
                 m_Command.SetComputeTextureParam(compute, kernel, "_Output", rt);
                 m_Command.SetComputeTextureParam(compute, kernel, "_From", from);
                 m_Command.SetComputeTextureParam(compute, kernel, "_To", to);
@@ -170,22 +174,23 @@ namespace UnityEngine.Rendering.PostProcessing
                 return from;
 
             bool is3D = from is Texture3D
-                    || (from is RenderTexture && ((RenderTexture)from).volumeDepth > 1);
+                        || (from is RenderTexture && ((RenderTexture)from).volumeDepth > 1);
 
             RenderTexture rt;
 
             // 3D texture blending is a special case and only works on compute enabled platforms
             if (is3D)
             {
-                int dpth = @from is Texture3D ? ((Texture3D) @from).depth : ((RenderTexture) @from).volumeDepth;
+                int dpth = @from is Texture3D ? ((Texture3D)@from).depth : ((RenderTexture)@from).volumeDepth;
                 int size = Mathf.Max(from.width, from.height);
                 size = Mathf.Max(size, dpth);
-                
+
                 rt = Get(RenderTextureFormat.ARGBHalf, from.width, from.height, dpth, true, true);
 
                 var compute = m_Resources.computeShaders.texture3dLerp;
                 int kernel = compute.FindKernel("KTexture3DLerpToColor");
-                m_Command.SetComputeVectorParam(compute, "_DimensionsAndLerp", new Vector4(from.width, from.height, dpth, t));
+                m_Command.SetComputeVectorParam(compute, "_DimensionsAndLerp",
+                    new Vector4(from.width, from.height, dpth, t));
                 m_Command.SetComputeVectorParam(compute, "_TargetColor", new Vector4(to.r, to.g, to.b, to.a));
                 m_Command.SetComputeTextureParam(compute, kernel, "_Output", rt);
                 m_Command.SetComputeTextureParam(compute, kernel, "_From", from);
@@ -213,8 +218,8 @@ namespace UnityEngine.Rendering.PostProcessing
 
             return rt;
         }
-        
-        
+
+
         internal void Clear()
         {
             foreach (var rt in m_Actives)

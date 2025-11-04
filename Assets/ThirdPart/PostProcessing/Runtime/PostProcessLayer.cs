@@ -7,6 +7,7 @@ namespace UnityEngine.Rendering.PostProcessing
 {
 #if UNITY_2017_2_OR_NEWER && ENABLE_VR
     using XRSettings = UnityEngine.XR.XRSettings;
+
 #elif UNITY_5_6_OR_NEWER && ENABLE_VR
     using XRSettings = UnityEngine.VR.VRSettings;
 #endif
@@ -117,8 +118,7 @@ namespace UnityEngine.Rendering.PostProcessing
         /// <seealso cref="PostProcessDebug"/>
         public PostProcessDebugLayer debugLayer;
 
-        [SerializeField]
-        PostProcessResources m_Resources;
+        [SerializeField] PostProcessResources m_Resources;
 
         // UI states
 #if UNITY_2017_1_OR_NEWER
@@ -153,14 +153,11 @@ namespace UnityEngine.Rendering.PostProcessing
             public PostProcessBundle bundle;
         }
 
-        [SerializeField]
-        List<SerializedBundleRef> m_BeforeTransparentBundles;
+        [SerializeField] List<SerializedBundleRef> m_BeforeTransparentBundles;
 
-        [SerializeField]
-        List<SerializedBundleRef> m_BeforeStackBundles;
+        [SerializeField] List<SerializedBundleRef> m_BeforeStackBundles;
 
-        [SerializeField]
-        List<SerializedBundleRef> m_AfterStackBundles;
+        [SerializeField] List<SerializedBundleRef> m_AfterStackBundles;
 
         public Dictionary<PostProcessEvent, List<SerializedBundleRef>> sortedBundles { get; private set; }
 
@@ -297,8 +294,8 @@ namespace UnityEngine.Rendering.PostProcessing
             sortedBundles = new Dictionary<PostProcessEvent, List<SerializedBundleRef>>(new PostProcessEventComparer())
             {
                 { PostProcessEvent.BeforeTransparent, m_BeforeTransparentBundles },
-                { PostProcessEvent.BeforeStack,       m_BeforeStackBundles },
-                { PostProcessEvent.AfterStack,        m_AfterStackBundles }
+                { PostProcessEvent.BeforeStack, m_BeforeStackBundles },
+                { PostProcessEvent.AfterStack, m_AfterStackBundles }
             };
 
             // Done
@@ -308,9 +305,10 @@ namespace UnityEngine.Rendering.PostProcessing
         void UpdateBundleSortList(List<SerializedBundleRef> sortedList, PostProcessEvent evt)
         {
             // First get all effects associated with the injection point
-            var effects = m_Bundles.Where(kvp => kvp.Value.attribute.eventType == evt && !kvp.Value.attribute.builtinEffect)
-                                   .Select(kvp => kvp.Value)
-                                   .ToList();
+            var effects = m_Bundles
+                .Where(kvp => kvp.Value.attribute.eventType == evt && !kvp.Value.attribute.builtinEffect)
+                .Select(kvp => kvp.Value)
+                .ToList();
 
             // Remove types that don't exist anymore
             sortedList.RemoveAll(x =>
@@ -398,15 +396,18 @@ namespace UnityEngine.Rendering.PostProcessing
             // It should actually check for having tiled architecture but this is not exposed to script,
             // so we are checking for mobile as a good substitute
 #if UNITY_2019_3_OR_NEWER
-            if(SystemInfo.usesLoadStoreActions)
+            if (SystemInfo.usesLoadStoreActions)
 #else
             if(Application.isMobilePlatform)
 #endif
             {
                 Rect r = m_Camera.rect;
-                if(Mathf.Abs(r.x) > 1e-6f || Mathf.Abs(r.y) > 1e-6f || Mathf.Abs(1.0f - r.width) > 1e-6f || Mathf.Abs(1.0f - r.height) > 1e-6f)
+                if (Mathf.Abs(r.x) > 1e-6f || Mathf.Abs(r.y) > 1e-6f || Mathf.Abs(1.0f - r.width) > 1e-6f ||
+                    Mathf.Abs(1.0f - r.height) > 1e-6f)
                 {
-                    Debug.LogWarning("When used with builtin render pipeline, Postprocessing package expects to be used on a fullscreen Camera.\nPlease note that using Camera viewport may result in visual artefacts or some things not working.", m_Camera);
+                    Debug.LogWarning(
+                        "When used with builtin render pipeline, Postprocessing package expects to be used on a fullscreen Camera.\nPlease note that using Camera viewport may result in visual artefacts or some things not working.",
+                        m_Camera);
                 }
             }
 
@@ -461,7 +462,8 @@ namespace UnityEngine.Rendering.PostProcessing
 #endif
         }
 
-        void UpdateSrcDstForOpaqueOnly(ref int src, ref int dst, PostProcessRenderContext context, RenderTargetIdentifier cameraTarget, int opaqueOnlyEffectsRemaining)
+        void UpdateSrcDstForOpaqueOnly(ref int src, ref int dst, PostProcessRenderContext context,
+            RenderTargetIdentifier cameraTarget, int opaqueOnlyEffectsRemaining)
         {
             if (src > -1)
                 context.command.ReleaseTemporaryRT(src);
@@ -484,7 +486,9 @@ namespace UnityEngine.Rendering.PostProcessing
         void BuildCommandBuffers()
         {
             var context = m_CurrentContext;
-            var sourceFormat = m_Camera.allowHDR ? RuntimeUtilities.defaultHDRRenderTextureFormat : RenderTextureFormat.Default;
+            var sourceFormat = m_Camera.allowHDR
+                ? RuntimeUtilities.defaultHDRRenderTextureFormat
+                : RenderTextureFormat.Default;
 
             if (!RuntimeUtilities.isFloatingPointFormat(sourceFormat))
                 m_NaNKilled = true;
@@ -558,11 +562,13 @@ namespace UnityEngine.Rendering.PostProcessing
                 int srcTarget = -1;
                 int dstTarget = -1;
 
-                UpdateSrcDstForOpaqueOnly(ref srcTarget, ref dstTarget, context, cameraTarget, opaqueOnlyEffects + 1); // + 1 for blit
+                UpdateSrcDstForOpaqueOnly(ref srcTarget, ref dstTarget, context, cameraTarget,
+                    opaqueOnlyEffects + 1); // + 1 for blit
 
                 if (RequiresInitialBlit(m_Camera, context) || opaqueOnlyEffects == 1)
                 {
-                    cmd.BuiltinBlit(context.source, context.destination, RuntimeUtilities.copyStdMaterial, stopNaNPropagation ? 1 : 0);
+                    cmd.BuiltinBlit(context.source, context.destination, RuntimeUtilities.copyStdMaterial,
+                        stopNaNPropagation ? 1 : 0);
                     UpdateSrcDstForOpaqueOnly(ref srcTarget, ref dstTarget, context, cameraTarget, opaqueOnlyEffects);
                 }
 
@@ -588,12 +594,15 @@ namespace UnityEngine.Rendering.PostProcessing
 
             // Post-transparency stack
             int tempRt = -1;
-            bool forceNanKillPass = (!m_NaNKilled && stopNaNPropagation && RuntimeUtilities.isFloatingPointFormat(sourceFormat));
+            bool forceNanKillPass = (!m_NaNKilled && stopNaNPropagation &&
+                                     RuntimeUtilities.isFloatingPointFormat(sourceFormat));
             if (RequiresInitialBlit(m_Camera, context) || forceNanKillPass)
             {
                 tempRt = m_TargetPool.Get();
-                context.GetScreenSpaceTemporaryRT(m_LegacyCmdBuffer, tempRt, 0, sourceFormat, RenderTextureReadWrite.sRGB);
-                m_LegacyCmdBuffer.BuiltinBlit(cameraTarget, tempRt, RuntimeUtilities.copyStdMaterial, stopNaNPropagation ? 1 : 0);
+                context.GetScreenSpaceTemporaryRT(m_LegacyCmdBuffer, tempRt, 0, sourceFormat,
+                    RenderTextureReadWrite.sRGB);
+                m_LegacyCmdBuffer.BuiltinBlit(cameraTarget, tempRt, RuntimeUtilities.copyStdMaterial,
+                    stopNaNPropagation ? 1 : 0);
                 if (!m_NaNKilled)
                     m_NaNKilled = stopNaNPropagation;
 
@@ -647,7 +656,8 @@ namespace UnityEngine.Rendering.PostProcessing
 
                 if (m_CurrentContext.stereoActive)
                 {
-                    if (RuntimeUtilities.isSinglePassStereoEnabled || m_Camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right)
+                    if (RuntimeUtilities.isSinglePassStereoEnabled ||
+                        m_Camera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right)
                         m_Camera.ResetStereoProjectionMatrices();
                 }
             }
@@ -676,7 +686,7 @@ namespace UnityEngine.Rendering.PostProcessing
             return GetBundle<T>().CastSettings<T>();
         }
 
-		/// <summary>
+        /// <summary>
         /// Utility method to bake a multi-scale volumetric obscurance map for the current camera.
         /// This will only work if ambient occlusion is active in the scene.
         /// </summary>
@@ -687,7 +697,8 @@ namespace UnityEngine.Rendering.PostProcessing
         /// from the given camera</param>
         /// <param name="invert">Should the result be inverted?</param>
         /// <param name="isMSAA">Should use MSAA?</param>
-        public void BakeMSVOMap(CommandBuffer cmd, Camera camera, RenderTargetIdentifier destination, RenderTargetIdentifier? depthMap, bool invert, bool isMSAA = false)
+        public void BakeMSVOMap(CommandBuffer cmd, Camera camera, RenderTargetIdentifier destination,
+            RenderTargetIdentifier? depthMap, bool invert, bool isMSAA = false)
         {
             var bundle = GetBundle<AmbientOcclusion>();
             var renderer = bundle.CastRenderer<AmbientOcclusionRenderer>().GetMultiScaleVO();
@@ -891,7 +902,8 @@ namespace UnityEngine.Rendering.PostProcessing
             RenderTargetIdentifier cameraTexture = context.source;
 
 #if UNITY_2019_1_OR_NEWER
-            if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
+            if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode ==
+                PostProcessRenderContext.StereoRenderingMode.SinglePass)
             {
                 cmd.SetSinglePassStereo(SinglePassStereoMode.None);
                 cmd.DisableShaderKeyword("UNITY_SINGLE_PASS_STEREO");
@@ -908,19 +920,23 @@ namespace UnityEngine.Rendering.PostProcessing
                     context.GetScreenSpaceTemporaryRT(cmd, lastTarget, 0, context.sourceFormat);
                     if (context.stereoActive && context.numberOfEyes > 1)
                     {
-                        if (context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                        if (context.stereoRenderingMode ==
+                            PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                         {
-                            cmd.BlitFullscreenTriangleFromTexArray(context.source, lastTarget, RuntimeUtilities.copyFromTexArraySheet, 1, false, eye);
+                            cmd.BlitFullscreenTriangleFromTexArray(context.source, lastTarget,
+                                RuntimeUtilities.copyFromTexArraySheet, 1, false, eye);
                             preparedStereoSource = true;
                         }
                         else if (context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
                         {
-                            cmd.BlitFullscreenTriangleFromDoubleWide(context.source, lastTarget, RuntimeUtilities.copyStdFromDoubleWideMaterial, 1, eye);
+                            cmd.BlitFullscreenTriangleFromDoubleWide(context.source, lastTarget,
+                                RuntimeUtilities.copyStdFromDoubleWideMaterial, 1, eye);
                             preparedStereoSource = true;
                         }
                     }
                     else
                         cmd.BlitFullscreenTriangle(context.source, lastTarget, RuntimeUtilities.copySheet, 1);
+
                     context.source = lastTarget;
                     m_NaNKilled = true;
                 }
@@ -931,17 +947,21 @@ namespace UnityEngine.Rendering.PostProcessing
                     context.GetScreenSpaceTemporaryRT(cmd, lastTarget, 0, context.sourceFormat);
                     if (context.stereoActive)
                     {
-                        if (context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                        if (context.stereoRenderingMode ==
+                            PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                         {
-                            cmd.BlitFullscreenTriangleFromTexArray(context.source, lastTarget, RuntimeUtilities.copyFromTexArraySheet, 1, false, eye);
+                            cmd.BlitFullscreenTriangleFromTexArray(context.source, lastTarget,
+                                RuntimeUtilities.copyFromTexArraySheet, 1, false, eye);
                             preparedStereoSource = true;
                         }
                         else if (context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
                         {
-                            cmd.BlitFullscreenTriangleFromDoubleWide(context.source, lastTarget, RuntimeUtilities.copyStdFromDoubleWideMaterial, stopNaNPropagation ? 1 : 0, eye);
+                            cmd.BlitFullscreenTriangleFromDoubleWide(context.source, lastTarget,
+                                RuntimeUtilities.copyStdFromDoubleWideMaterial, stopNaNPropagation ? 1 : 0, eye);
                             preparedStereoSource = true;
                         }
                     }
+
                     context.source = lastTarget;
                 }
 
@@ -977,10 +997,13 @@ namespace UnityEngine.Rendering.PostProcessing
                 }
 
                 bool hasBeforeStackEffects = HasActiveEffects(PostProcessEvent.BeforeStack, context);
-                bool hasAfterStackEffects = HasActiveEffects(PostProcessEvent.AfterStack, context) && !breakBeforeColorGrading;
+                bool hasAfterStackEffects =
+                    HasActiveEffects(PostProcessEvent.AfterStack, context) && !breakBeforeColorGrading;
                 bool needsFinalPass = (hasAfterStackEffects
-                    || (antialiasingMode == Antialiasing.FastApproximateAntialiasing) || (antialiasingMode == Antialiasing.SubpixelMorphologicalAntialiasing && subpixelMorphologicalAntialiasing.IsSupported()))
-                    && !breakBeforeColorGrading;
+                                       || (antialiasingMode == Antialiasing.FastApproximateAntialiasing) ||
+                                       (antialiasingMode == Antialiasing.SubpixelMorphologicalAntialiasing &&
+                                        subpixelMorphologicalAntialiasing.IsSupported()))
+                                      && !breakBeforeColorGrading;
 
                 // Right before the builtin stack
                 if (hasBeforeStackEffects)
@@ -1002,7 +1025,8 @@ namespace UnityEngine.Rendering.PostProcessing
             }
 
 #if UNITY_2019_1_OR_NEWER
-            if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
+            if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode ==
+                PostProcessRenderContext.StereoRenderingMode.SinglePass)
             {
                 cmd.SetSinglePassStereo(SinglePassStereoMode.SideBySide);
                 cmd.EnableShaderKeyword("UNITY_SINGLE_PASS_STEREO");
@@ -1020,7 +1044,8 @@ namespace UnityEngine.Rendering.PostProcessing
             m_NaNKilled = false;
         }
 
-        int RenderInjectionPoint(PostProcessEvent evt, PostProcessRenderContext context, string marker, int releaseTargetAfterUse = -1)
+        int RenderInjectionPoint(PostProcessEvent evt, PostProcessRenderContext context, string marker,
+            int releaseTargetAfterUse = -1)
         {
             int tempTarget = m_TargetPool.Get();
             var finalDestination = context.destination;
@@ -1106,10 +1131,14 @@ namespace UnityEngine.Rendering.PostProcessing
 
         void ApplyDefaultFlip(MaterialPropertyBlock properties)
         {
-            properties.SetVector(ShaderIDs.UVTransform, SystemInfo.graphicsUVStartsAtTop ? new Vector4(1.0f, -1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 1.0f, 0.0f, 0.0f));
+            properties.SetVector(ShaderIDs.UVTransform,
+                SystemInfo.graphicsUVStartsAtTop
+                    ? new Vector4(1.0f, -1.0f, 0.0f, 1.0f)
+                    : new Vector4(1.0f, 1.0f, 0.0f, 0.0f));
         }
 
-        int RenderBuiltins(PostProcessRenderContext context, bool isFinalPass, int releaseTargetAfterUse = -1, int eye = -1)
+        int RenderBuiltins(PostProcessRenderContext context, bool isFinalPass, int releaseTargetAfterUse = -1,
+            int eye = -1)
         {
             var uberSheet = context.propertySheets.Get(context.resources.shaders.uber);
             uberSheet.ClearKeywords();
@@ -1118,7 +1147,8 @@ namespace UnityEngine.Rendering.PostProcessing
             context.autoExposureTexture = RuntimeUtilities.whiteTexture;
             context.bloomBufferNameID = -1;
 
-            if (isFinalPass && context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+            if (isFinalPass && context.stereoActive && context.stereoRenderingMode ==
+                PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                 uberSheet.EnableKeyword("STEREO_INSTANCING_ENABLED");
 
             var cmd = context.command;
@@ -1135,7 +1165,8 @@ namespace UnityEngine.Rendering.PostProcessing
                 context.destination = tempTarget;
 
                 // Handle FXAA's keep alpha mode
-                if (antialiasingMode == Antialiasing.FastApproximateAntialiasing && !fastApproximateAntialiasing.keepAlpha)
+                if (antialiasingMode == Antialiasing.FastApproximateAntialiasing &&
+                    !fastApproximateAntialiasing.keepAlpha)
                     uberSheet.properties.SetFloat(ShaderIDs.LumaInAlpha, 1f);
             }
 
@@ -1176,12 +1207,14 @@ namespace UnityEngine.Rendering.PostProcessing
                 ApplyDefaultFlip(uberSheet.properties);
             }
 
-            if (context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+            if (context.stereoActive && context.stereoRenderingMode ==
+                PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
             {
                 uberSheet.properties.SetFloat(ShaderIDs.DepthSlice, eye);
                 cmd.BlitFullscreenTriangleToTexArray(context.source, context.destination, uberSheet, 0, false, eye);
             }
-            else if (isFinalPass && context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
+            else if (isFinalPass && context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode ==
+                     PostProcessRenderContext.StereoRenderingMode.SinglePass)
             {
                 cmd.BlitFullscreenTriangleToDoubleWide(context.source, context.destination, uberSheet, 0, eye);
             }
@@ -1214,15 +1247,18 @@ namespace UnityEngine.Rendering.PostProcessing
             if (breakBeforeColorGrading)
             {
                 var sheet = context.propertySheets.Get(context.resources.shaders.discardAlpha);
-                if (context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                if (context.stereoActive && context.stereoRenderingMode ==
+                    PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                     sheet.EnableKeyword("STEREO_INSTANCING_ENABLED");
 
-                if (context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                if (context.stereoActive && context.stereoRenderingMode ==
+                    PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                 {
                     sheet.properties.SetFloat(ShaderIDs.DepthSlice, eye);
                     cmd.BlitFullscreenTriangleToTexArray(context.source, context.destination, sheet, 0, false, eye);
                 }
-                else if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
+                else if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode ==
+                         PostProcessRenderContext.StereoRenderingMode.SinglePass)
                 {
                     cmd.BlitFullscreenTriangleToDoubleWide(context.source, context.destination, sheet, 0, eye);
                 }
@@ -1237,7 +1273,8 @@ namespace UnityEngine.Rendering.PostProcessing
                 context.uberSheet = uberSheet;
                 int tempTarget = -1;
 
-                if (context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                if (context.stereoActive && context.stereoRenderingMode ==
+                    PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                     uberSheet.EnableKeyword("STEREO_INSTANCING_ENABLED");
 
                 if (antialiasingMode == Antialiasing.FastApproximateAntialiasing)
@@ -1250,7 +1287,8 @@ namespace UnityEngine.Rendering.PostProcessing
                     if (fastApproximateAntialiasing.keepAlpha)
                         uberSheet.EnableKeyword("FXAA_KEEP_ALPHA");
                 }
-                else if (antialiasingMode == Antialiasing.SubpixelMorphologicalAntialiasing && subpixelMorphologicalAntialiasing.IsSupported())
+                else if (antialiasingMode == Antialiasing.SubpixelMorphologicalAntialiasing &&
+                         subpixelMorphologicalAntialiasing.IsSupported())
                 {
                     tempTarget = m_TargetPool.Get();
                     var finalDestination = context.destination;
@@ -1264,12 +1302,14 @@ namespace UnityEngine.Rendering.PostProcessing
                 dithering.Render(context);
 
                 ApplyFlip(context, uberSheet.properties);
-                if (context.stereoActive && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
+                if (context.stereoActive && context.stereoRenderingMode ==
+                    PostProcessRenderContext.StereoRenderingMode.SinglePassInstanced)
                 {
                     uberSheet.properties.SetFloat(ShaderIDs.DepthSlice, eye);
                     cmd.BlitFullscreenTriangleToTexArray(context.source, context.destination, uberSheet, 0, false, eye);
                 }
-                else if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode == PostProcessRenderContext.StereoRenderingMode.SinglePass)
+                else if (context.stereoActive && context.numberOfEyes > 1 && context.stereoRenderingMode ==
+                         PostProcessRenderContext.StereoRenderingMode.SinglePass)
                 {
                     cmd.BlitFullscreenTriangleToDoubleWide(context.source, context.destination, uberSheet, 0, eye);
                 }

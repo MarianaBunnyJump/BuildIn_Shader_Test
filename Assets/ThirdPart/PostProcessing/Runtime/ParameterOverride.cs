@@ -42,7 +42,7 @@ namespace UnityEngine.Rendering.PostProcessing
         protected internal virtual void OnEnable()
         {
         }
-        
+
         /// <summary>
         /// This method is called right before the parent <see cref="PostProcessEffectSettings"/>
         /// gets de-initialized.
@@ -154,7 +154,7 @@ namespace UnityEngine.Rendering.PostProcessing
         {
             value = parameter.GetValue<T>();
         }
-        
+
         /// <inheritdoc />
         public override int GetHash()
         {
@@ -218,7 +218,9 @@ namespace UnityEngine.Rendering.PostProcessing
     /// A <see cref="ParameterOverride{T}"/> that holds a <c>bool</c> value.
     /// </summary>
     [Serializable]
-    public sealed class BoolParameter : ParameterOverride<bool> {}
+    public sealed class BoolParameter : ParameterOverride<bool>
+    {
+    }
 
     /// <summary>
     /// A <see cref="ParameterOverride{T}"/> that holds a <see cref="Color"/> value.
@@ -388,7 +390,7 @@ namespace UnityEngine.Rendering.PostProcessing
             if (value != null)
                 value.Cache(Time.renderedFrameCount);
         }
-        
+
         /// <inheritdoc />
         public override void Interp(Spline from, Spline to, float t)
         {
@@ -397,7 +399,7 @@ namespace UnityEngine.Rendering.PostProcessing
                 base.Interp(from, to, t);
                 return;
             }
-            
+
             int frameCount = Time.renderedFrameCount;
             from.Cache(frameCount);
             to.Cache(frameCount);
@@ -452,7 +454,7 @@ namespace UnityEngine.Rendering.PostProcessing
     public sealed class TextureParameter : ParameterOverride<Texture>
     {
         public TextureParameterDefault defaultState = TextureParameterDefault.Black;
-        
+
         /// <inheritdoc />
         public override void Interp(Texture from, Texture to, float t)
         {
@@ -476,13 +478,13 @@ namespace UnityEngine.Rendering.PostProcessing
                 {
                     int size = from != null ? from.height : to.height;
                     Texture defaultTexture = RuntimeUtilities.GetLutStrip(size);
-                    
+
                     if (from == null) from = defaultTexture;
                     if (to == null) to = defaultTexture;
                 }
 
                 Color tgtColor;
-                                
+
                 switch (defaultState)
                 {
                     case TextureParameterDefault.Black:
@@ -518,6 +520,7 @@ namespace UnityEngine.Rendering.PostProcessing
                         base.Interp(from, to, t);
                         return;
                 }
+
                 // If we made it this far, tgtColor contains the color we'll be lerping into (or out of)
                 if (from == null)
                 {

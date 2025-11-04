@@ -2,75 +2,78 @@
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "Dissolve"
 {
-	Properties
-	{
-		_Cutoff( "Mask Clip Value", Float ) = 0.5
-		_MainTex("MainTex", 2D) = "white" {}
-		_Gradient("Gradient", 2D) = "white" {}
-		_ChangeAmount("ChangeAmount", Range( 0 , 1)) = 0.5559191
-		_EdgeWidth("EdgeWidth", Range( 0 , 2)) = 0.554593
-		[HDR]_Color0("Color 0", Color) = (0,0,0,0)
-		[Toggle(_KEYWORD0_ON)] _Keyword0("Keyword 0", Float) = 1
-		_TimeSpeed("TimeSpeed", Float) = 0
-		[HideInInspector] _texcoord( "", 2D ) = "white" {}
-		[HideInInspector] __dirty( "", Int ) = 1
-	}
+    Properties
+    {
+        _Cutoff( "Mask Clip Value", Float ) = 0.5
+        _MainTex("MainTex", 2D) = "white" {}
+        _Gradient("Gradient", 2D) = "white" {}
+        _ChangeAmount("ChangeAmount", Range( 0 , 1)) = 0.5559191
+        _EdgeWidth("EdgeWidth", Range( 0 , 2)) = 0.554593
+        [HDR]_Color0("Color 0", Color) = (0,0,0,0)
+        [Toggle(_KEYWORD0_ON)] _Keyword0("Keyword 0", Float) = 1
+        _TimeSpeed("TimeSpeed", Float) = 0
+        [HideInInspector] _texcoord( "", 2D ) = "white" {}
+        [HideInInspector] __dirty( "", Int ) = 1
+    }
 
-	SubShader
-	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
-		Cull Back
-		CGPROGRAM
-		#include "UnityShaderVariables.cginc"
-		#pragma target 3.0
-		#pragma shader_feature_local _KEYWORD0_ON
-		#pragma surface surf Unlit keepalpha addshadow fullforwardshadows 
-		struct Input
-		{
-			float2 uv_texcoord;
-		};
+    SubShader
+    {
+        Tags
+        {
+            "RenderType" = "Transparent" "Queue" = "Geometry+0" "IsEmissive" = "true"
+        }
+        Cull Back
+        CGPROGRAM
+        #include "UnityShaderVariables.cginc"
+        #pragma target 3.0
+        #pragma shader_feature_local _KEYWORD0_ON
+        #pragma surface surf Unlit keepalpha addshadow fullforwardshadows
+        struct Input
+        {
+            float2 uv_texcoord;
+        };
 
-		uniform sampler2D _MainTex;
-		uniform float4 _MainTex_ST;
-		uniform float4 _Color0;
-		uniform sampler2D _Gradient;
-		SamplerState sampler_Gradient;
-		uniform float4 _Gradient_ST;
-		uniform float _TimeSpeed;
-		uniform float _ChangeAmount;
-		uniform float _EdgeWidth;
-		SamplerState sampler_MainTex;
-		uniform float _Cutoff = 0.5;
+        uniform sampler2D _MainTex;
+        uniform float4 _MainTex_ST;
+        uniform float4 _Color0;
+        uniform sampler2D _Gradient;
+        SamplerState sampler_Gradient;
+        uniform float4 _Gradient_ST;
+        uniform float _TimeSpeed;
+        uniform float _ChangeAmount;
+        uniform float _EdgeWidth;
+        SamplerState sampler_MainTex;
+        uniform float _Cutoff = 0.5;
 
-		inline half4 LightingUnlit( SurfaceOutput s, half3 lightDir, half atten )
-		{
-			return half4 ( 0, 0, 0, s.Alpha );
-		}
+        inline half4 LightingUnlit(SurfaceOutput s, half3 lightDir, half atten)
+        {
+            return half4(0, 0, 0, s.Alpha);
+        }
 
-		void surf( Input i , inout SurfaceOutput o )
-		{
-			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float4 tex2DNode1 = tex2D( _MainTex, uv_MainTex );
-			float2 uv_Gradient = i.uv_texcoord * _Gradient_ST.xy + _Gradient_ST.zw;
-			float mulTime31 = _Time.y * _TimeSpeed;
-			#ifdef _KEYWORD0_ON
+        void surf(Input i, inout SurfaceOutput o)
+        {
+            float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
+            float4 tex2DNode1 = tex2D(_MainTex, uv_MainTex);
+            float2 uv_Gradient = i.uv_texcoord * _Gradient_ST.xy + _Gradient_ST.zw;
+            float mulTime31 = _Time.y * _TimeSpeed;
+            #ifdef _KEYWORD0_ON
 				float staticSwitch38 = _ChangeAmount;
-			#else
-				float staticSwitch38 = frac( mulTime31 );
-			#endif
-			float Gradient24 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-1.0 + (staticSwitch38 - 0.0) * (1.0 - -1.0) / (1.0 - 0.0)) ) / 1.0 );
-			float clampResult16 = clamp( ( 1.0 - ( distance( Gradient24 , 0.5 ) / _EdgeWidth ) ) , 0.0 , 1.0 );
-			float EdgeFrame28 = clampResult16;
-			float4 lerpResult21 = lerp( tex2DNode1 , ( _Color0 * 2.0 * tex2DNode1 ) , EdgeFrame28);
-			o.Emission = lerpResult21.rgb;
-			o.Alpha = 1;
-			clip( ( tex2DNode1.a * step( 0.5 , Gradient24 ) ) - _Cutoff );
-		}
-
-		ENDCG
-	}
-	Fallback "Diffuse"
-	CustomEditor "ASEMaterialInspector"
+            #else
+            float staticSwitch38 = frac(mulTime31);
+            #endif
+            float Gradient24 = ((tex2D(_Gradient, uv_Gradient).r - (-1.0 + (staticSwitch38 - 0.0) * (1.0 - -1.0) / (1.0
+                - 0.0))) / 1.0);
+            float clampResult16 = clamp((1.0 - (distance(Gradient24, 0.5) / _EdgeWidth)), 0.0, 1.0);
+            float EdgeFrame28 = clampResult16;
+            float4 lerpResult21 = lerp(tex2DNode1, (_Color0 * 2.0 * tex2DNode1), EdgeFrame28);
+            o.Emission = lerpResult21.rgb;
+            o.Alpha = 1;
+            clip((tex2DNode1.a * step(0.5, Gradient24)) - _Cutoff);
+        }
+        ENDCG
+    }
+    Fallback "Diffuse"
+    CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
 Version=18500

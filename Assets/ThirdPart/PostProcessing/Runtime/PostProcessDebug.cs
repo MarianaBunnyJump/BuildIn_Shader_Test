@@ -18,6 +18,7 @@ namespace UnityEngine.Rendering.PostProcessing
         /// A reference to a <see cref="PostProcessLayer"/> to debug.
         /// </summary>
         public PostProcessLayer postProcessLayer;
+
         PostProcessLayer m_PreviousPostProcessLayer;
 
         /// <summary>
@@ -123,10 +124,12 @@ namespace UnityEngine.Rendering.PostProcessing
         {
             m_CmdAfterEverything.Clear();
 
-            if (postProcessLayer == null || !postProcessLayer.enabled || !postProcessLayer.debugLayer.debugOverlayActive)
+            if (postProcessLayer == null || !postProcessLayer.enabled ||
+                !postProcessLayer.debugLayer.debugOverlayActive)
                 return;
 
-            m_CmdAfterEverything.Blit(postProcessLayer.debugLayer.debugOverlayTarget, BuiltinRenderTextureType.CameraTarget);
+            m_CmdAfterEverything.Blit(postProcessLayer.debugLayer.debugOverlayTarget,
+                BuiltinRenderTextureType.CameraTarget);
         }
 
         void OnGUI()

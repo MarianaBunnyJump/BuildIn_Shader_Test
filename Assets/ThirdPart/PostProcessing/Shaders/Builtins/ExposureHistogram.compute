@@ -33,19 +33,19 @@ void KEyeHistogram(uint2 dispatchThreadId : SV_DispatchThreadID, uint2 groupThre
     const uint localThreadId = groupThreadId.y * HISTOGRAM_THREAD_X + groupThreadId.x;
 
     // Clears the shared memory
-#if HISTOGRAM_REDUCTION_ALT_PATH
+    #if HISTOGRAM_REDUCTION_ALT_PATH
     uint localThreadIdOff = localThreadId << 1u;
     if (localThreadIdOff < HISTOGRAM_BINS)
     {
         gs_histogram[localThreadIdOff    ] = 0u;
         gs_histogram[localThreadIdOff + 1] = 0u;
     }
-#else
+    #else
     if (localThreadId < HISTOGRAM_BINS)
     {
         gs_histogram[localThreadId] = 0u;
     }
-#endif
+    #endif
 
     float2 ipos = float2(dispatchThreadId) * 2.0;
 
@@ -77,18 +77,18 @@ void KEyeHistogram(uint2 dispatchThreadId : SV_DispatchThreadID, uint2 groupThre
     GroupMemoryBarrierWithGroupSync();
 
     // Merge everything
-#if HISTOGRAM_REDUCTION_ALT_PATH
+    #if HISTOGRAM_REDUCTION_ALT_PATH
     if (localThreadIdOff < HISTOGRAM_BINS)
     {
         InterlockedAdd(_HistogramBuffer[localThreadIdOff    ], gs_histogram[localThreadIdOff    ]);
         InterlockedAdd(_HistogramBuffer[localThreadIdOff + 1], gs_histogram[localThreadIdOff + 1]);
     }
-#else
+    #else
     if (localThreadId < HISTOGRAM_BINS)
     {
         InterlockedAdd(_HistogramBuffer[localThreadId], gs_histogram[localThreadId]);
     }
-#endif
+    #endif
 }
 
 #pragma kernel KEyeHistogramClear

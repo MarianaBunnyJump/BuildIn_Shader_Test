@@ -5,7 +5,7 @@
     !defined(KERNEL_LARGE) && !defined(KERNEL_VERYLARGE)
 
 static const int kSampleCount = 1;
-static const float2 kDiskKernel[1] = { float2(0, 0) };
+static const float2 kDiskKernel[1] = {float2(0, 0)};
 
 #endif
 
