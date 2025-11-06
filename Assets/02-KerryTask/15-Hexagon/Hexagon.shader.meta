@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b63e49323ecdb4747b0d699abacf5528
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _LineHexagon: {fileID: 2800000, guid: 373bb7a955475ea4a82cd75a31359196, type: 3}
+  - _LineEmissMask: {fileID: 2800000, guid: b2ebe4a36fc94024d91fe15b52fe5772, type: 3}
+  - _AuraTex: {fileID: 2800000, guid: 57451d90cad4e93448f1dbe1a84a7c70, type: 3}
+  - _HitNoise1: {fileID: 2800000, guid: 3c506748d17579d4a85691a58877ff1e, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
