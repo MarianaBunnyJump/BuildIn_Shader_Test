@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 
 
 [ExecuteInEditMode]
-public class PlanarReflection : MonoBehaviour {
+public class PlanarReflection2 : MonoBehaviour {
     public LayerMask _reflectionMask = -1;
     public bool _reflectSkybox = false;
     Color _clearColor = Color.black;
